@@ -1,5 +1,4 @@
 ﻿using LBAPI2.Models;
-using LBAPI2.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,6 +11,7 @@ namespace LBAPI2.Controllers
     {
         private readonly LBAPI2Context _context;
 
+   
         public CountriesController(LBAPI2Context context)
         {
             _context = context;
@@ -38,7 +38,7 @@ namespace LBAPI2.Controllers
             {
                 return NotFound();
             }
-            var country = await _context.Countries.FindAsync(id);
+            var country = _context.Countries.Where(c => id == c.Id).FirstOrDefault();
 
             if (country == null)
             {
@@ -88,10 +88,15 @@ namespace LBAPI2.Controllers
             {
                 return Problem("Entity set 'LBAPIContext.Countries'  is null.");
             }
-            _context.Countries.Add(country);
-            await _context.SaveChangesAsync();
+            var t = (_context.Countries.Where(a => a.Name == country.Name)).FirstOrDefault();
+            if (t == null)
+            {
+                _context.Countries.Add(country);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetCountry", new { id = country.Id }, country);
+            }
+            else return Problem("A country with the same name exists");
 
-            return CreatedAtAction("GetCountry", new { id = country.Id }, country);
         }
 
         // DELETE: api/Countries/5
@@ -102,7 +107,8 @@ namespace LBAPI2.Controllers
             {
                 return NotFound();
             }
-            var country = await _context.Countries.FindAsync(id);
+            var country = _context.Countries.Where(c=>id==c.Id).FirstOrDefault();
+            //var country = await _context.Countries.FindAsync(id);
             if (country == null)
             {
                 return NotFound();

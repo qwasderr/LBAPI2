@@ -1,7 +1,6 @@
 using LBAPI2.Models;
 using Microsoft.EntityFrameworkCore;
 //using Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore;
-using LBAPI2.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +27,9 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 app.UseAuthorization();
+app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
 
 app.MapRazorPages();
 

@@ -14,22 +14,30 @@ function addCountry() {
         name: addNameTextbox.value.trim(),
         rating: addRatingTextbox.value.trim(),
     };
-    fetch(uri, {
-        method: 'POST',
-        headers: {
 
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(country)
-    })
-        .then(response => response.json())
-        .then(() => {
-            getCountries();
-            addNameTextbox.value = '';
-            addRatingTextbox.value = '';
+    const country2 = countries.find(c => c.name == country.name);
+    //console.log(country);
+    //console.log(country2);
+    //console.log(countries);
+    if (country2 != null || country.rating<=0) { }
+    else {
+        fetch(uri, {
+            method: 'POST',
+            headers: {
+
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(country)
         })
-        .catch(error => console.error('Unable to add country.', error));
+            .then(response => response.json())
+            .then(() => {
+                getCountries();
+                addNameTextbox.value = '';
+                addRatingTextbox.value = '';
+            })
+            .catch(error => console.error('Unable to add country.', error));
+    }
 }
 function deleteCountry(id) {
     fetch(`${uri}/${id}`, {
@@ -52,18 +60,22 @@ function updateCountry() {
         name: document.getElementById('edit-name').value.trim(),
         rating: document.getElementById('edit-rating').value.trim()
     };
-    fetch(`${uri}/${countryId}`, {
-        method: 'PUT',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(country)
-    })
-        .then(() => getCountries())
-        .catch(error => console.error('Unable to update country.', error));
-    closeInput();
-    return false;
+    const country2 = countries.find(c => c.name == country.name);
+    if (country2 != null || country.rating <= 0) { closeInput(); }
+    else {
+        fetch(`${uri}/${countryId}`, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(country)
+        })
+            .then(() => getCountries())
+            .catch(error => console.error('Unable to update country.', error));
+        closeInput();
+        return false;
+    }
 }
 function closeInput() {
     document.getElementById('editForm').style.display = 'none';
